@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TestiForge — Safe Testimony Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Offline Status Bar -->
+<div id="offlineBar" class="offline-bar hidden">
+    <i class="fas fa-wifi-slash"></i>
+    <span>You are offline. Your data is saved locally and will sync when you're back online.</span>
+    <i class="fas fa-database"></i>
+</div>
+
+<!-- Online Sync Bar -->
+<div id="onlineBar" class="online-bar hidden">
+    <i class="fas fa-cloud-upload-alt"></i>
+    <span>Back online! Syncing your data...</span>
+    <div class="sync-progress"></div>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Navigation Tabs -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <div class="logo-icon"><i class="fas fa-shield-heart"></i></div>
+            <div class="logo-text">Testi<span>Forge</span></div>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-page="home" onclick="showPage('home')">
+                <i class="fas fa-home"></i> Home
+            </button>
+            <button class="nav-tab" data-page="record" onclick="showPage('record')">
+                <i class="fas fa-microphone-alt"></i> Record
+            </button>
+            <button class="nav-tab" data-page="myRecords" onclick="showPage('myRecords')">
+                <i class="fas fa-folder-open"></i> My Records
+            </button>
+            <button class="nav-tab" data-page="feedback" onclick="showPage('feedback')">
+                <i class="fas fa-star"></i> Feedback
+            </button>
+            <button class="nav-tab" data-page="profile" onclick="showPage('profile')">
+                <i class="fas fa-user"></i> Profile
+            </button>
+        </div>
+        <div class="nav-cta">
+            <button class="btn-theme" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i></button>
+            <button class="btn-nav-primary" onclick="openModal()" id="loginBtn">Get Started</button>
+            <div class="user-menu" id="userMenu" style="display:none;">
+                <button class="user-btn" onclick="toggleUserDropdown()">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName">User</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="userDropdown" class="user-dropdown hidden">
+                    <a href="#" onclick="showPage('profile')"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#" onclick="showPage('myRecords')"><i class="fas fa-folder-open"></i> My Records</a>
+                    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Page: Home -->
+<div id="page-home" class="page active">
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-eyebrow"><i class="fas fa-shield-heart"></i> Trauma-Informed · Offline Ready · End-to-End Encrypted</div>
+            <h1 class="hero-title">Your truth,<br>told <em>safely.</em><br><span class="highlight">Documented.</span></h1>
+            <p class="hero-desc">TestiForge empowers survivors to record, structure, and preserve their testimonies — even offline. Your data stays with you until you're ready to sync.</p>
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="showPage('record')"><i class="fas fa-microphone"></i> Record Your Testimony</button>
+                <button class="btn-secondary" onclick="scrollToHow()"><i class="fas fa-play-circle"></i> See How It Works</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="stats-strip">
+        <div class="stat-item"><span class="stat-number" data-target="2400">0</span><div class="stat-label">Testimonies Recorded</div></div>
+        <div class="stat-item"><span class="stat-number" data-target="98">0</span><div class="stat-label">% Data Encrypted</div></div>
+        <div class="stat-item"><span class="stat-number" data-target="340">0</span><div class="stat-label">Cases Supported</div></div>
+        <div class="stat-item"><span class="stat-number" data-target="12">0</span><div class="stat-label">Legal Partners</div></div>
+    </div>
+
+    <section class="how-bg" id="how">
+        <div class="section-head">
+            <div class="section-head-left">
+                <div class="section-eyebrow"><i class="fas fa-route"></i> Process</div>
+                <h2 class="section-title">Three steps to safety.</h2><br>
+                <p class="section-sub">From recording to legal-ready documentation — even offline.</p><br>
+            </div>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card reveal"><div class="step-num">1</div><div class="step-icon rose"><i class="fas fa-microphone-alt"></i></div><h3 class="step-title">Record in Your Own Words</h3><p class="step-desc">Speak, type, or record video at your own pace. Offline-first — no internet needed.</p></div>
+            <div class="step-card reveal reveal-delay-1"><div class="step-num">2</div><div class="step-icon gold"><i class="fas fa-brain"></i></div><h3 class="step-title">AI Structures Your Case</h3><p class="step-desc">Our AI identifies key events, dates, and evidence — organizing your words into a clear timeline.</p></div>
+            <div class="step-card reveal reveal-delay-2"><div class="step-num">3</div><div class="step-icon jade"><i class="fas fa-cloud-upload-alt"></i></div><h3 class="step-title">Sync When Ready</h3><p class="step-desc">Your data stays on your device until you choose to sync. Complete control, always.</p></div>
+        </div>
+    </section>
+</div>
+
+<!-- Page: Record Testimony -->
+<div id="page-record" class="page">
+    <div class="record-container">
+        <div class="record-header">
+            <h2><i class="fas fa-microphone-alt"></i> Record Your Testimony</h2><br>
+            <div class="safety-notice"><i class="fas fa-heartbeat"></i><p>Take your time. You can pause, resume later, or record in multiple sessions. All data saved locally.</p></div><br>
+        </div>
+
+        <div class="input-methods">
+            <button class="method-btn active" onclick="selectMethod('voice')"><i class="fas fa-microphone"></i> Voice</button>
+            <button class="method-btn" onclick="selectMethod('text')"><i class="fas fa-keyboard"></i> Text</button>
+            <button class="method-btn" onclick="selectMethod('video')"><i class="fas fa-video"></i> Video</button>
+        </div>
+
+        <!-- Voice Recording Panel -->
+        <div id="voiceInput" class="input-panel active">
+            <div class="recording-area">
+                <div class="waveform-container"><div id="waveform"></div><div class="waveform-overlay"></div></div>
+                <div class="recording-controls">
+                    <button class="btn-record" id="recordBtn" onclick="toggleVoiceRecording()"><i class="fas fa-microphone"></i> <span>Start Recording</span></button>
+                    <button class="btn-action" onclick="pauseVoiceRecording()"><i class="fas fa-pause"></i> Pause</button>
+                    <button class="btn-action" onclick="stopVoiceRecording()"><i class="fas fa-stop"></i> Stop</button>
+                    <button class="btn-action" onclick="resetVoiceRecording()"><i class="fas fa-rotate-left"></i> Restart</button>
+                </div>
+                <div class="record-timer" id="voiceTimer">00:00</div>
+            </div>
+            <div class="record-transcript" id="voiceTranscript"><span class="transcript-placeholder">Your transcription will appear here after recording...</span></div>
+        </div>
+
+        <!-- Text Input Panel -->
+        <div id="textInput" class="input-panel">
+            <div class="text-area-container">
+                <textarea id="testimonyText" placeholder="Type your testimony here...&#10;&#10;You can write in any order - our AI will help organize it.&#10;&#10;Your text is saved automatically as you type." rows="12"></textarea>
+                <div class="char-counter"><span id="charCount">0</span> characters</div>
+                <div class="auto-save-status" id="autoSaveStatus"><i class="fas fa-save"></i> Auto-saving...</div>
+            </div>
+        </div>
+
+        <!-- Video Recording Panel -->
+        <div id="videoInput" class="input-panel">
+            <div class="video-container">
+                <video id="videoPreview" autoplay muted playsinline></video>
+                <div class="video-controls">
+                    <button class="btn-record" id="videoRecordBtn" onclick="toggleVideoRecording()"><i class="fas fa-video"></i> Start Recording</button>
+                    <button class="btn-action" onclick="pauseVideoRecording()"><i class="fas fa-pause"></i> Pause</button>
+                    <button class="btn-action" onclick="stopVideoRecording()"><i class="fas fa-stop"></i> Stop</button>
+                    <button class="btn-action" onclick="resetVideoRecording()"><i class="fas fa-rotate-left"></i> Restart</button>
+                </div>
+                <div class="record-timer" id="videoTimer">00:00</div>
+            </div>
+            <div class="record-transcript" id="videoTranscript"><span class="transcript-placeholder">Video transcription will appear here...</span></div>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <label><i class="fas fa-language"></i> Testimony Language:</label>
+            <select id="testimonyLanguage" class="language-select">
+                <option value="english">English</option>
+                <option value="hindi">हिन्दी (Hindi)</option>
+                <option value="spanish">Español (Spanish)</option>
+                <option value="french">Français (French)</option>
+            </select>
+        </div>
+
+        <!-- Format Selector -->
+        <div class="format-selector" style="margin: 20px 0; display: flex; align-items: center; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="radio" name="formatType" value="standard" checked> 📊 Standard Format
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="radio" name="formatType" value="legal"> ⚖️ Legal Court Testimony Format
+            </label>
+        </div>
+
+        <button class="submit-btn" onclick="analyzeTestimony()"><i class="fas fa-wand-magic-sparkles"></i> Analyze with AI</button>
+
+        <!-- Resume Draft Notice -->
+        <div id="resumeDraftNotice" class="resume-draft-notice hidden">
+            <i class="fas fa-pen-fancy"></i>
+            <span>You have an unfinished draft from <span id="draftDate"></span>. <a href="#" onclick="resumeDraft()">Resume where you left off?</a></span>
+            <button onclick="discardDraft()"><i class="fas fa-trash"></i> Discard</button>
+        </div>
+
+        <!-- Structured Output -->
+        <div id="structuredOutput" class="structured-output hidden">
+            <div class="output-header"><h3><i class="fas fa-robot"></i> AI-Structured Testimony</h3><div class="output-actions"><button class="output-btn" onclick="downloadTestimonyAsPDF()"><i class="fas fa-download"></i> Download</button><button class="output-btn" onclick="printTestimony()"><i class="fas fa-print"></i> Print</button></div></div>
+            <div id="outputContent" class="output-content"></div>
+            <div class="output-footer"><button class="confirm-btn" onclick="saveTestimony()"><i class="fas fa-save"></i> Save Record</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- Page: My Records -->
+<div id="page-myRecords" class="page">
+    <div class="records-container">
+        <div class="section-header"><h2><i class="fas fa-folder-open"></i> My Testimony Records</h2><button class="sync-btn" onclick="syncRecordsManual()"><i class="fas fa-cloud-upload-alt"></i> Sync Now</button></div>
+        <div id="recordsList" class="records-grid"><div class="empty-state"><i class="fas fa-inbox"></i><p>No records yet</p><button class="btn-primary" onclick="showPage('record')">Record Your First Testimony</button></div></div>
+    </div>
+</div>
+
+<!-- Page: Feedback -->
+<div id="page-feedback" class="page">
+    <div class="feedback-container">
+        <div class="feedback-header"><h2><i class="fas fa-star"></i> Share Your Feedback</h2><p>Your voice helps us improve TestiForge for everyone.</p></div>
+        
+        <div class="rating-section">
+            <label>How would you rate your experience?</label>
+            <div class="rating-stars">
+                <i class="far fa-star" data-rating="1"></i>
+                <i class="far fa-star" data-rating="2"></i>
+                <i class="far fa-star" data-rating="3"></i>
+                <i class="far fa-star" data-rating="4"></i>
+                <i class="far fa-star" data-rating="5"></i>
+            </div>
+            <input type="hidden" id="ratingValue">
+        </div>
+
+        <div class="feedback-form">
+            <div class="form-group"><label>What did you like most?</label><input type="text" id="feedbackLike" placeholder="e.g., Easy to use, Privacy features, Offline support"></div>
+            <div class="form-group"><label>What could we improve?</label><textarea id="feedbackImprove" rows="3" placeholder="Share your suggestions..."></textarea></div>
+            <div class="form-group"><label>Would you recommend TestiForge to others?</label>
+                <div class="recommend-btns">
+                    <button class="recommend-btn" data-recommend="yes">Yes 👍</button>
+                    <button class="recommend-btn" data-recommend="no">No 👎</button>
+                    <button class="recommend-btn" data-recommend="maybe">Maybe 🤔</button>
+                </div>
+                <input type="hidden" id="recommendValue">
+            </div>
+            <button class="submit-feedback-btn" onclick="submitFeedback()"><i class="fas fa-paper-plane"></i> Submit Feedback</button>
+        </div>
+
+        <div class="feedback-list"><h3>Recent Feedback</h3><div id="feedbackList" class="feedback-items"></div></div>
+    </div>
+</div>
+
+<!-- Page: Profile -->
+<div id="page-profile" class="page">
+    <div class="profile-container">
+        <div class="profile-header"><h2><i class="fas fa-user-circle"></i> Your Profile</h2><p>Manage your account and preferences</p></div>
+        <div class="profile-card"><div class="card-header"><i class="fas fa-id-card"></i><h3>Personal Information</h3></div><div class="profile-info"><div class="info-row"><label><i class="fas fa-user"></i> Full Name</label><p id="profileName">-</p></div><div class="info-row"><label><i class="fas fa-envelope"></i> Email</label><p id="profileEmail">-</p></div><div class="info-row"><label><i class="fas fa-phone"></i> Mobile Number</label><p id="profileMobile">-</p></div><div class="info-row"><label><i class="fas fa-user-tag"></i> Role</label><p id="profileRole">-</p></div><div class="info-row"><label><i class="fas fa-calendar"></i> Member Since</label><p id="profileJoined">-</p></div></div></div>
+        <div class="profile-card"><div class="card-header"><i class="fas fa-cog"></i><h3>Preferences</h3></div><div class="preference-item"><div class="pref-label"><i class="fas fa-moon"></i><span>Dark Mode</span></div><label class="switch"><input type="checkbox" id="darkModeSwitch" onchange="toggleThemeFromSwitch()"><span class="slider round"></span></label></div><div class="preference-item"><div class="pref-label"><i class="fas fa-database"></i><span>Auto-sync on Wi-Fi</span></div><label class="switch"><input type="checkbox" id="autoSyncSwitch" checked><span class="slider round"></span></label></div></div>
+        <div class="profile-card"><div class="card-header"><i class="fas fa-shield-alt"></i><h3>Storage & Sync</h3></div><div class="storage-info"><p><i class="fas fa-database"></i> Local Storage Used: <span id="storageUsed">0</span> KB</p><p><i class="fas fa-cloud-upload-alt"></i> Pending Sync: <span id="pendingSync">0</span> records</p><button class="btn-secondary" onclick="exportAllData()"><i class="fas fa-download"></i> Export All Data</button><button class="btn-danger" onclick="clearLocalData()"><i class="fas fa-trash"></i> Clear Local Data</button></div></div>
+    </div>
+</div>
+
+<!-- Auth Modal - Email/Mobile Login -->
+<div id="authModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 500px;">
+        <div class="modal-header"><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button><div class="modal-icon"><i class="fas fa-shield-heart"></i></div><h2>Join TestiForge</h2><p>Your voice deserves to be heard — safely.</p></div>
+        
+        <!-- Login Method Tabs -->
+        <div class="login-method-tabs">
+            <button class="login-method-tab active" onclick="switchLoginMethod('email')">📧 Email Login</button>
+            <button class="login-method-tab" onclick="switchLoginMethod('mobile')">📱 Mobile Login</button>
+        </div>
+        
+        <!-- Email Login Tab -->
+        <div id="emailLoginTab" class="login-tab active">
+            <div class="modal-tabs"><button class="modal-tab active" onclick="switchTab('login')">Sign In</button><button class="modal-tab" onclick="switchTab('register')">Create Account</button></div>
+            <div class="modal-body">
+                <div id="loginForm">
+                    <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="loginEmail" class="form-input" placeholder="your@email.com"></div>
+                    <div class="form-group"><label class="form-label">Password</label><input type="password" id="loginPassword" class="form-input" placeholder="••••••••"></div>
+                    <div style="text-align: right; margin-bottom: 15px;"><a href="#" onclick="openForgotPasswordModal(); return false;" style="color: var(--gold); font-size: 12px;">Forgot Password?</a></div>
+                    <button class="btn-submit" onclick="handleAuth('login')">Sign In Securely <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div id="registerForm" style="display:none">
+                    <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="regName" class="form-input" placeholder="Your name"></div>
+                    <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="regEmail" class="form-input" placeholder="your@email.com"></div>
+                    <div class="form-group"><label class="form-label">Mobile Number (Optional)</label><input type="tel" id="regMobile" class="form-input" placeholder="+91 9876543210"></div>
+                    <div class="form-group"><label class="form-label">Password</label><input type="password" id="regPassword" class="form-input" placeholder="Min. 8 characters"></div>
+                    <div class="form-group"><label class="form-label">I am signing up as</label><select id="regRole" class="form-input"><option value="survivor">Survivor</option><option value="ngo">NGO Worker</option><option value="legal">Legal Officer</option></select></div>
+                    <div class="consent-checkbox"><input type="checkbox" id="consentTerms" required><label for="consentTerms">I understand my data will be encrypted and stored securely</label></div>
+                    <button class="btn-submit" onclick="handleAuth('register')">Create Secure Account <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Login Tab -->
+        <div id="mobileLoginTab" class="login-tab">
+            <div class="modal-body">
+                <div class="form-group"><label class="form-label">Mobile Number</label><input type="tel" id="mobileNumber" class="form-input" placeholder="+91 9876543210"></div>
+                <div class="form-group"><label class="form-label">Password</label><input type="password" id="mobilePassword" class="form-input" placeholder="••••••••"></div>
+                <div style="text-align: right; margin-bottom: 15px;"><a href="#" onclick="openMobileForgotPasswordModal(); return false;" style="color: var(--gold); font-size: 12px;">Forgot Password?</a></div>
+                <button class="btn-submit" onclick="handleMobileLogin()">Login with Mobile <i class="fas fa-arrow-right"></i></button>
+                <hr style="margin: 20px 0; border-color: var(--border);">
+                <div style="text-align: center;"><p style="color: var(--text3); font-size: 13px;">Don't have an account? <a href="#" onclick="switchLoginMethod('email'); switchTab('register');" style="color: var(--gold);">Register here</a></p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Modal (Email) -->
+<div id="forgotPasswordModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 450px;">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeForgotPasswordModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-icon"><i class="fas fa-envelope"></i></div>
+            <h2>Reset Password</h2>
+            <p>We'll send an OTP to your email</p>
+        </div>
+        <div class="modal-body">
+            <div id="forgotStep1">
+                <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="resetEmail" class="form-input" placeholder="your@email.com"></div>
+                <button class="btn-submit" onclick="sendResetOtp()"><i class="fas fa-paper-plane"></i> Send OTP</button>
+            </div>
+            <div id="forgotStep2" style="display: none;">
+                <div class="form-group"><label class="form-label">Enter OTP</label><input type="text" id="resetOtp" class="form-input" placeholder="6-digit OTP" maxlength="6"></div>
+                <div class="form-group"><label class="form-label">New Password</label><input type="password" id="resetNewPassword" class="form-input" placeholder="Min. 8 characters"></div>
+                <div class="form-group"><label class="form-label">Confirm Password</label><input type="password" id="resetConfirmPassword" class="form-input" placeholder="Confirm new password"></div>
+                <button class="btn-submit" onclick="verifyResetOtpAndResetPassword()"><i class="fas fa-check-circle"></i> Reset Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Modal (Mobile) -->
+<div id="mobileForgotPasswordModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 450px;">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeMobileForgotPasswordModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-icon"><i class="fas fa-phone"></i></div>
+            <h2>Reset Password</h2>
+            <p>We'll send an OTP to your mobile number</p>
+        </div>
+        <div class="modal-body">
+            <div id="mobileForgotStep1">
+                <div class="form-group"><label class="form-label">Mobile Number</label><input type="tel" id="resetMobile" class="form-input" placeholder="+91 9876543210"></div>
+                <button class="btn-submit" onclick="sendMobileResetOtp()"><i class="fas fa-paper-plane"></i> Send OTP</button>
+            </div>
+            <div id="mobileForgotStep2" style="display: none;">
+                <div class="form-group"><label class="form-label">Enter OTP</label><input type="text" id="resetMobileOtp" class="form-input" placeholder="6-digit OTP" maxlength="6"></div>
+                <div class="form-group"><label class="form-label">New Password</label><input type="password" id="resetMobileNewPassword" class="form-input" placeholder="Min. 8 characters"></div>
+                <div class="form-group"><label class="form-label">Confirm Password</label><input type="password" id="resetMobileConfirmPassword" class="form-input" placeholder="Confirm new password"></div>
+                <button class<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NyaySetu — Safe Testimony Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Offline Status Bar -->
+<div id="offlineBar" class="offline-bar hidden">
+    <i class="fas fa-wifi-slash"></i>
+    <span>You are offline. Your data is saved locally.</span>
+    <i class="fas fa-database"></i>
+</div>
+
+<!-- Online Sync Bar -->
+<div id="onlineBar" class="online-bar hidden">
+    <i class="fas fa-cloud-upload-alt"></i>
+    <span>Back online! Syncing your data...</span>
+</div>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <div class="logo-icon"><i class="fas fa-shield-heart"></i></div>
+            <div class="logo-text">Nyay<span>Setu</span></div>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-page="home" onclick="showPage('home')"><i class="fas fa-home"></i> Home</button>
+            <button class="nav-tab" data-page="record" onclick="showPage('record')"><i class="fas fa-microphone-alt"></i> Record</button>
+            <button class="nav-tab" data-page="myRecords" onclick="showPage('myRecords')"><i class="fas fa-folder-open"></i> My Records</button>
+            <button class="nav-tab" data-page="feedback" onclick="showPage('feedback')"><i class="fas fa-star"></i> Feedback</button>
+            <button class="nav-tab" data-page="profile" onclick="showPage('profile')"><i class="fas fa-user"></i> Profile</button>
+        </div>
+        <div class="nav-cta">
+            <button class="btn-theme" onclick="toggleTheme()" id="themeBtn"><i class="fas fa-moon"></i></button>
+            <button class="btn-nav-primary" onclick="openModal()" id="loginBtn">Get Started</button>
+            <div class="user-menu" id="userMenu" style="display:none;">
+                <button class="user-btn" onclick="toggleUserDropdown()">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName">User</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="userDropdown" class="user-dropdown hidden">
+                    <a href="#" onclick="showPage('profile')"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#" onclick="showPage('myRecords')"><i class="fas fa-folder-open"></i> My Records</a>
+                    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Page: Home -->
+<div id="page-home" class="page active">
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-eyebrow"><i class="fas fa-shield-heart"></i> Trauma-Informed · Offline Ready · End-to-End Encrypted</div>
+            <h1 class="hero-title">Your truth,<br>told <em>safely.</em><br><span class="highlight">Documented.</span></h1>
+            <p class="hero-desc">NyaySetu empowers survivors to record, structure, and preserve their testimonies — even offline. Your data stays with you.</p>
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="showPage('record')"><i class="fas fa-microphone"></i> Record Your Testimony</button>
+                <button class="btn-secondary" onclick="scrollToHow()"><i class="fas fa-play-circle"></i> See How It Works</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Section -->
+    <div class="trust-section">
+        <div class="trust-grid">
+            <div class="trust-card"><div class="trust-icon"><i class="fas fa-database"></i></div><h4>Local Storage</h4><p>Data stays on your device</p></div>
+            <div class="trust-card"><div class="trust-icon"><i class="fas fa-lock"></i></div><h4>Encrypted</h4><p>Military-grade security</p></div>
+            <div class="trust-card"><div class="trust-icon"><i class="fas fa-trash-alt"></i></div><h4>You Control</h4><p>Delete anytime</p></div>
+            <div class="trust-card"><div class="trust-icon"><i class="fas fa-download"></i></div><h4>Export Data</h4><p>Download your records</p></div>
+            <div class="trust-card"><div class="trust-icon"><i class="fas fa-plug"></i></div><h4>Offline First</h4><p>No internet needed</p></div>
+        </div>
+        <div class="disclaimer-card"><i class="fas fa-gavel"></i><div><strong>Legal Disclaimer:</strong><p>Documentation tool — not a truth verification system. Consult legal professionals.</p></div></div>
+    </div>
+
+    <div class="stats-strip">
+        <div class="stat-item"><span class="stat-number" data-target="2400">0</span><div class="stat-label">Testimonies Recorded</div></div>
+        <div class="stat-item"><span class="stat-number" data-target="98">0</span><div class="stat-label">% Data Encrypted</div></div>
+        <div class="stat-item"><span class="stat-number" data-target="340">0</span><div class="stat-label">Cases Supported</div></div>
+        <div class="stat-item"><span class="stat-number" data-target="12">0</span><div class="stat-label">Legal Partners</div></div>
+    </div>
+
+    <section class="how-bg" id="how">
+        <div class="section-head"><div class="section-head-left"><div class="section-eyebrow"><i class="fas fa-route"></i> Process</div><h2 class="section-title">Three steps to safety.</h2><p class="section-sub">From recording to legal-ready documentation — even offline.</p></div></div>
+        <div class="steps-grid">
+            <div class="step-card"><div class="step-num">1</div><div class="step-icon rose"><i class="fas fa-microphone-alt"></i></div><h3>Record in Your Own Words</h3><p>Speak, type, or record video at your own pace.</p></div>
+            <div class="step-card"><div class="step-num">2</div><div class="step-icon gold"><i class="fas fa-brain"></i></div><h3>AI Structures Your Case</h3><p>Organizes your words into a clear timeline.</p></div>
+            <div class="step-card"><div class="step-num">3</div><div class="step-icon jade"><i class="fas fa-cloud-upload-alt"></i></div><h3>Sync When Ready</h3><p>Your data, your control. Sync only when you want.</p></div>
+        </div>
+    </section>
+</div>
+
+<!-- Page: Record Testimony -->
+<div id="page-record" class="page">
+    <div class="record-container">
+        <div class="record-header">
+            <h2><i class="fas fa-microphone-alt"></i> Record Your Testimony</h2>
+            <div class="safety-notice"><i class="fas fa-heartbeat"></i><p>Take your time. Pause, resume, or record in multiple sessions.</p></div>
+        </div>
+
+        <div class="input-methods">
+            <button class="method-btn active" onclick="selectMethod('voice')"><i class="fas fa-microphone"></i> Voice</button>
+            <button class="method-btn" onclick="selectMethod('text')"><i class="fas fa-keyboard"></i> Text</button>
+            <button class="method-btn" onclick="selectMethod('video')"><i class="fas fa-video"></i> Video</button>
+        </div>
+
+        <!-- Voice Panel -->
+        <div id="voiceInput" class="input-panel active">
+            <div class="recording-area">
+                <div class="waveform-container"><div id="waveform"></div></div>
+                <div class="recording-controls">
+                    <button class="btn-record" id="recordBtn" onclick="toggleVoiceRecording()"><i class="fas fa-microphone"></i> Start</button>
+                    <button class="btn-action" onclick="pauseVoiceRecording()"><i class="fas fa-pause"></i> Pause</button>
+                    <button class="btn-action" onclick="stopVoiceRecording()"><i class="fas fa-stop"></i> Stop</button>
+                </div>
+                <div class="record-timer" id="voiceTimer">00:00</div>
+            </div>
+            <div class="record-transcript" id="voiceTranscript"><span class="placeholder">Your transcription will appear here...</span></div>
+        </div>
+
+        <!-- Text Panel -->
+        <div id="textInput" class="input-panel">
+            <textarea id="testimonyText" rows="12" placeholder="Type your testimony here...&#10;&#10;You can write in any order. AI will organize it chronologically."></textarea>
+            <div class="char-counter"><span id="charCount">0</span> characters</div>
+            <div class="auto-save-status" id="autoSaveStatus"><i class="fas fa-save"></i> Auto-saving...</div>
+        </div>
+
+        <!-- Video Panel -->
+        <div id="videoInput" class="input-panel">
+            <div class="video-container">
+                <video id="videoPreview" autoplay muted playsinline></video>
+                <div class="video-controls">
+                    <button class="btn-record" id="videoRecordBtn" onclick="toggleVideoRecording()"><i class="fas fa-video"></i> Start</button>
+                    <button class="btn-action" onclick="pauseVideoRecording()"><i class="fas fa-pause"></i> Pause</button>
+                    <button class="btn-action" onclick="stopVideoRecording()"><i class="fas fa-stop"></i> Stop</button>
+                </div>
+                <div class="record-timer" id="videoTimer">00:00</div>
+            </div>
+            <div class="record-transcript" id="videoTranscript"><span class="placeholder">Video transcription will appear here...</span></div>
+        </div>
+
+        <div class="language-selector">
+            <label><i class="fas fa-language"></i> Language:</label>
+            <select id="testimonyLanguage">
+                <option value="english">English</option>
+                <option value="hindi">हिन्दी (Hindi)</option>
+                <option value="spanish">Español</option>
+                <option value="french">Français</option>
+            </select>
+        </div>
+
+        <div class="format-selector">
+            <label><input type="radio" name="formatType" value="standard" checked> Standard Format</label>
+            <label><input type="radio" name="formatType" value="legal"> Legal Court Format</label>
+        </div>
+
+        <button class="submit-btn" onclick="analyzeTestimony()"><i class="fas fa-wand-magic-sparkles"></i> Analyze with AI</button>
+
+        <div id="resumeDraftNotice" class="resume-draft-notice hidden">
+            <span>You have an unfinished draft. <a href="#" onclick="resumeDraft()">Resume?</a></span>
+            <button onclick="discardDraft()">Discard</button>
+        </div>
+
+        <div id="structuredOutput" class="structured-output hidden">
+            <div class="output-header"><h3><i class="fas fa-robot"></i> AI-Structured Testimony</h3>
+                <div><button class="output-btn" onclick="downloadTestimonyAsPDF()"><i class="fas fa-download"></i> Download</button>
+                <button class="output-btn" onclick="printTestimony()"><i class="fas fa-print"></i> Print</button></div>
+            </div>
+            <div id="outputContent"></div>
+            <div class="output-footer"><button class="confirm-btn" onclick="saveTestimony()"><i class="fas fa-save"></i> Save Record</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- Page: My Records -->
+<div id="page-myRecords" class="page">
+    <div class="records-container">
+        <div class="section-header"><h2><i class="fas fa-folder-open"></i> My Records</h2><button class="sync-btn" onclick="syncRecordsManual()"><i class="fas fa-cloud-upload-alt"></i> Sync</button></div>
+        <div id="recordsList" class="records-grid"><div class="empty-state"><i class="fas fa-inbox"></i><p>No records yet</p><button class="btn-primary" onclick="showPage('record')">Record Your First Testimony</button></div></div>
+    </div>
+</div>
+
+<!-- Page: Feedback -->
+<div id="page-feedback" class="page">
+    <div class="feedback-container">
+        <h2><i class="fas fa-star"></i> Share Your Feedback</h2>
+        <div class="rating-stars"><i class="far fa-star" data-rating="1"></i><i class="far fa-star" data-rating="2"></i><i class="far fa-star" data-rating="3"></i><i class="far fa-star" data-rating="4"></i><i class="far fa-star" data-rating="5"></i></div>
+        <input type="text" id="feedbackLike" placeholder="What did you like most?">
+        <textarea id="feedbackImprove" rows="3" placeholder="What could we improve?"></textarea>
+        <div class="recommend-btns"><button class="recommend-btn" data-recommend="yes">Yes 👍</button><button class="recommend-btn" data-recommend="no">No 👎</button><button class="recommend-btn" data-recommend="maybe">Maybe 🤔</button></div>
+        <button class="submit-feedback-btn" onclick="submitFeedback()">Submit Feedback</button>
+        <div id="feedbackList"></div>
+    </div>
+</div>
+
+<!-- Page: Profile -->
+<div id="page-profile" class="page">
+    <div class="profile-container">
+        <div class="profile-card"><h3><i class="fas fa-user"></i> Personal Info</h3><p id="profileName">-</p><p id="profileEmail">-</p><p id="profileRole">-</p><p id="profileJoined">-</p></div>
+        <div class="profile-card"><h3><i class="fas fa-cog"></i> Preferences</h3><label>Dark Mode <input type="checkbox" id="darkModeSwitch" onchange="toggleThemeFromSwitch()"></label></div>
+        <div class="profile-card"><h3><i class="fas fa-database"></i> Storage</h3><p>Used: <span id="storageUsed">0</span> KB</p><p>Pending Sync: <span id="pendingSync">0</span></p><button onclick="exportAllData()">Export All Data</button><button onclick="clearLocalData()" class="danger">Clear Data</button></div>
+    </div>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header"><button class="modal-close" onclick="closeModal()">&times;</button><div class="modal-icon"><i class="fas fa-shield-heart"></i></div><h2>Join NyaySetu</h2></div>
+        <div class="login-method-tabs"><button class="login-method-tab active" onclick="switchLoginMethod('email')">📧 Email</button><button class="login-method-tab" onclick="switchLoginMethod('mobile')">📱 Mobile</button></div>
+        
+        <div id="emailLoginTab" class="login-tab active">
+            <div class="modal-tabs"><button class="modal-tab active" onclick="switchTab('login')">Sign In</button><button class="modal-tab" onclick="switchTab('register')">Register</button></div>
+            <div id="loginForm"><input type="email" id="loginEmail" placeholder="Email"><input type="password" id="loginPassword" placeholder="Password"><a href="#" onclick="openForgotPasswordModal()">Forgot Password?</a><button onclick="handleAuth('login')">Sign In</button></div>
+            <div id="registerForm" style="display:none"><input type="text" id="regName" placeholder="Full Name"><input type="email" id="regEmail" placeholder="Email"><input type="tel" id="regMobile" placeholder="Mobile (Optional)"><input type="password" id="regPassword" placeholder="Password (min 8 chars)"><select id="regRole"><option value="survivor">Survivor</option><option value="ngo">NGO Worker</option><option value="legal">Legal Officer</option></select><button onclick="handleAuth('register')">Register</button></div>
+        </div>
+        
+        <div id="mobileLoginTab" class="login-tab"><input type="tel" id="mobileNumber" placeholder="Mobile Number"><input type="password" id="mobilePassword" placeholder="Password"><a href="#" onclick="openMobileForgotPasswordModal()">Forgot Password?</a><button onclick="handleMobileLogin()">Login</button></div>
+    </div>
+</div>
+
+<!-- Forgot Password Modals -->
+<div id="forgotPasswordModal" class="modal-overlay"><div class="modal-box"><div class="modal-header"><h3>Reset Password</h3><button class="modal-close" onclick="closeForgotPasswordModal()">&times;</button></div><div class="modal-body"><input type="email" id="resetEmail" placeholder="Email"><button onclick="sendResetOtp()">Send OTP</button><div id="forgotStep2" style="display:none"><input type="text" id="resetOtp" placeholder="OTP"><input type="password" id="resetNewPassword" placeholder="New Password"><input type="password" id="resetConfirmPassword" placeholder="Confirm"><button onclick="verifyResetOtpAndResetPassword()">Reset</button></div></div></div></div>
+
+<div id="mobileForgotPasswordModal" class="modal-overlay"><div class="modal-box"><div class="modal-header"><h3>Reset Password</h3><button class="modal-close" onclick="closeMobileForgotPasswordModal()">&times;</button></div><div class="modal-body"><input type="tel" id="resetMobile" placeholder="Mobile"><button onclick="sendMobileResetOtp()">Send OTP</button><div id="mobileForgotStep2" style="display:none"><input type="text" id="resetMobileOtp" placeholder="OTP"><input type="password" id="resetMobileNewPassword" placeholder="New Password"><input type="password" id="resetMobileConfirmPassword" placeholder="Confirm"><button onclick="verifyMobileResetOtpAndResetPassword()">Reset</button></div></div></div></div>
+
+<script src="app.js"></script>
+</body>
+</html>="btn-submit" onclick="verifyMobileResetOtpAndResetPassword()"><i class="fas fa-check-circle"></i> Reset Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
