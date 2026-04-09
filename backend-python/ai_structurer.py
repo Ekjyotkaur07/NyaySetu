@@ -27,7 +27,10 @@ OUTPUT JSON FORMAT:
 {{
     "timeline": [
         {{
-            "timestamp": "time or sequence number",
+            
+            
+            
+ m ,           "timestamp": "time or sequence number",
             "event": "description of event",
             "location": "where it happened or [NOT STATED]",
             "people": ["person1", "person2"],
